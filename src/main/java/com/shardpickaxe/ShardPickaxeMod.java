@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.item.Item;
@@ -25,8 +26,12 @@ import net.minecraft.world.World;
 public class ShardPickaxeMod implements ModInitializer {
 	public static final String MOD_ID = "shard_pickaxe";
 
-	/** Half-width of the mined square: 4 means -4..+4 = 9 blocks across. */
-	private static final int RADIUS = 4;
+	/** Half-width of the mined square: 1 means -1..+1 = 3x3 = 9 blocks. */
+	private static final int RADIUS = 1;
+
+	/** Netherite with Efficiency V (+26 speed) and Unbreaking III (~4x durability) built in. */
+	private static final ToolMaterial SHARD_MATERIAL = new ToolMaterial(
+			BlockTags.INCORRECT_FOR_NETHERITE_TOOL, 8124, 35.0f, 4.0f, 15, ItemTags.NETHERITE_TOOL_MATERIALS);
 
 	private static final RegistryKey<Item> KEY =
 			RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "shard_pickaxe"));
@@ -37,7 +42,7 @@ public class ShardPickaxeMod implements ModInitializer {
 			new Item(new Item.Settings()
 					.registryKey(KEY)
 					.fireproof()
-					.pickaxe(ToolMaterial.NETHERITE, 1.0f, -2.8f))
+					.pickaxe(SHARD_MATERIAL, 1.0f, -2.8f))
 	);
 
 	/** Guards against the area-break re-triggering the break event for every extra block. */
