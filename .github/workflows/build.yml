@@ -1,5 +1,7 @@
 name: build
 on: [push, workflow_dispatch]
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,3 +14,20 @@ jobs:
       - run: gradle build
       - uses: actions/upload-artifact@v4
         with: { name: shard-pickaxe, path: build/libs/*.jar }
+      - name: Publish jar to dist branch and release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          JAR=$(ls build/libs/*.jar | grep -v -- '-sources' | head -1)
+          cp "$JAR" /tmp/shard-pickaxe.jar
+          gh release delete v1.0.0 --yes --cleanup-tag || true
+          gh release create v1.0.0 /tmp/shard-pickaxe.jar --title "Shard Pickaxe 1.0.0" --notes "Fabric 1.21.11"
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git checkout --orphan dist
+          git rm -rf . -q
+          cp /tmp/shard-pickaxe.jar .
+          git add shard-pickaxe.jar
+          git commit -qm "Built jar"
+          git push -f origin dist
