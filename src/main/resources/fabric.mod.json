@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "shard_pickaxe",
+  "version": "${version}",
+  "name": "Shard Pickaxe",
+  "description": "A Netherite-tier pickaxe that mines a 9x9 area.",
+  "authors": ["You"],
+  "license": "MIT",
+  "icon": "assets/shard_pickaxe/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.shardpickaxe.ShardPickaxeMod"]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.0",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
