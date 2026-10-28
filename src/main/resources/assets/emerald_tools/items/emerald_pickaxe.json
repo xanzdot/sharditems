@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "shard_pickaxe:item/shard_pickaxe"
+    "model": "emerald_tools:item/emerald_tools"
   }
 }

@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "template": "minecraft:netherite_upgrade_smithing_template",
-  "base": "minecraft:netherite_pickaxe",
-  "addition": "minecraft:nether_star",
-  "result": { "id": "shard_pickaxe:shard_pickaxe", "count": 1 }
-}

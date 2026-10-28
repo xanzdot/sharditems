@@ -1,4 +1,4 @@
-package com.shardpickaxe;
+package com.emeraldtools;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -41,8 +41,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 
-public class ShardPickaxeMod implements ModInitializer {
-	public static final String MOD_ID = "shard_pickaxe";
+public class EmeraldToolsMod implements ModInitializer {
+	public static final String MOD_ID = "emerald_tools";
 
 	/** Half-width of the pickaxe square: 1 means 3x3 = 9 blocks. */
 	private static final int PICK_RADIUS = 1;
@@ -53,17 +53,17 @@ public class ShardPickaxeMod implements ModInitializer {
 	private static final long ARMOR_STRIKE_WINDOW = 100;
 
 	/** Netherite with Efficiency V (+26 speed) and Unbreaking III (~4x durability) built in. */
-	private static final ToolMaterial SHARD_MATERIAL = new ToolMaterial(
+	private static final ToolMaterial EMERALD_MATERIAL = new ToolMaterial(
 			BlockTags.INCORRECT_FOR_NETHERITE_TOOL, 8124, 35.0f, 4.0f, 15, ItemTags.NETHERITE_TOOL_MATERIALS);
 	/** Speed high enough that logs break instantly. */
 	private static final ToolMaterial AXE_MATERIAL = new ToolMaterial(
 			BlockTags.INCORRECT_FOR_NETHERITE_TOOL, 8124, 100.0f, 4.0f, 15, ItemTags.NETHERITE_TOOL_MATERIALS);
 
-	public static final Item SHARD_PICKAXE = register("shard_pickaxe", s -> s
-			.pickaxe(SHARD_MATERIAL, 1.0f, -2.8f)
+	public static final Item EMERALD_PICKAXE = register("emerald_pickaxe", s -> s
+			.pickaxe(EMERALD_MATERIAL, 1.0f, -2.8f)
 			.component(DataComponentTypes.TOOL, anyBlockTool()));
-	public static final Item SHARD_AXE = register("shard_axe", s -> s.axe(AXE_MATERIAL, 5.0f, -3.0f));
-	public static final Item SHARD_SWORD = register("shard_sword", s -> s.sword(SHARD_MATERIAL, 3.0f, -2.4f));
+	public static final Item EMERALD_AXE = register("emerald_axe", s -> s.axe(AXE_MATERIAL, 5.0f, -3.0f));
+	public static final Item EMERALD_SWORD = register("emerald_sword", s -> s.sword(EMERALD_MATERIAL, 3.0f, -2.4f));
 
 	/** Guards against area-breaks re-triggering the break event for every extra block. */
 	private static boolean breakingArea = false;
@@ -79,7 +79,7 @@ public class ShardPickaxeMod implements ModInitializer {
 	/**
 	 * Mines every block at full speed. The rules are copied from the vanilla Netherite pickaxe
 	 * (tags are not bound yet during mod init, so they can't be looked up directly), with their
-	 * speed raised to match the Shard material.
+	 * speed raised to match the Emerald material.
 	 */
 	private static ToolComponent anyBlockTool() {
 		ToolComponent vanilla = Items.NETHERITE_PICKAXE.getComponents().get(DataComponentTypes.TOOL);
@@ -93,10 +93,10 @@ public class ShardPickaxeMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> {
-			entries.add(SHARD_PICKAXE);
-			entries.add(SHARD_AXE);
+			entries.add(EMERALD_PICKAXE);
+			entries.add(EMERALD_AXE);
 		});
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(entries -> entries.add(SHARD_SWORD));
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(entries -> entries.add(EMERALD_SWORD));
 
 		PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
 			if (breakingArea || world.isClient()) return true;
@@ -104,9 +104,9 @@ public class ShardPickaxeMod implements ModInitializer {
 			if (player.isSneaking()) return true; // sneak = normal single-block break
 
 			ItemStack held = player.getMainHandStack();
-			if (held.isOf(SHARD_PICKAXE)) {
+			if (held.isOf(EMERALD_PICKAXE)) {
 				mineArea(world, serverPlayer, pos);
-			} else if (held.isOf(SHARD_AXE) && state.isIn(BlockTags.LOGS)) {
+			} else if (held.isOf(EMERALD_AXE) && state.isIn(BlockTags.LOGS)) {
 				fellTree(world, serverPlayer, pos);
 			}
 			return true; // let the original block break normally
@@ -116,7 +116,7 @@ public class ShardPickaxeMod implements ModInitializer {
 			if (breakingArea) return;
 			if (!(source.getAttacker() instanceof ServerPlayerEntity attacker)) return;
 			if (source.getSource() != attacker) return; // melee only
-			if (!attacker.getMainHandStack().isOf(SHARD_SWORD)) return;
+			if (!attacker.getMainHandStack().isOf(EMERALD_SWORD)) return;
 			if (!hasTotem(entity)) return;
 			if (!entity.isAlive()) return;
 
@@ -180,7 +180,7 @@ public class ShardPickaxeMod implements ModInitializer {
 						case Z -> origin.add(a, b, 0);
 					};
 					ItemStack held = player.getMainHandStack();
-					if (held.isEmpty() || !held.isOf(SHARD_PICKAXE)) return; // pickaxe broke
+					if (held.isEmpty() || !held.isOf(EMERALD_PICKAXE)) return; // pickaxe broke
 					if (!breakable(world, target)) continue;
 					player.interactionManager.tryBreakBlock(target);
 				}
@@ -221,7 +221,7 @@ public class ShardPickaxeMod implements ModInitializer {
 		try {
 			for (BlockPos n : found) {
 				ItemStack held = player.getMainHandStack();
-				if (held.isEmpty() || !held.isOf(SHARD_AXE)) return; // axe broke
+				if (held.isEmpty() || !held.isOf(EMERALD_AXE)) return; // axe broke
 				if (!breakable(world, n)) continue;
 				player.interactionManager.tryBreakBlock(n);
 			}

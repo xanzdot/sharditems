@@ -1,4 +1,0 @@
-{
-  "parent": "minecraft:item/handheld",
-  "textures": { "layer0": "shard_pickaxe:item/shard_axe" }
-}
