@@ -3,7 +3,7 @@
   "id": "shard_pickaxe",
   "version": "${version}",
   "name": "Shard Pickaxe",
-  "description": "A Netherite-tier pickaxe that mines a 9x9 area.",
+  "description": "Shard Pickaxe (3x3), Shard Axe (fells whole trees) and Shard Sword (pops totems).",
   "authors": ["You"],
   "license": "MIT",
   "icon": "assets/shard_pickaxe/icon.png",

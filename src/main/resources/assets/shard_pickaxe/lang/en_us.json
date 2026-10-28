@@ -1,3 +1,5 @@
 {
-  "item.shard_pickaxe.shard_pickaxe": "Shard Pickaxe"
+  "item.shard_pickaxe.shard_pickaxe": "Shard Pickaxe",
+  "item.shard_pickaxe.shard_axe": "Shard Axe",
+  "item.shard_pickaxe.shard_sword": "Shard Sword"
 }
