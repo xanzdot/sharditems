@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
@@ -75,11 +76,18 @@ public class ShardPickaxeMod implements ModInitializer {
 		return Registry.register(Registries.ITEM, key, new Item(settings));
 	}
 
-	/** Mines every block at full speed; pickaxe-mineable blocks also drop their items. */
+	/**
+	 * Mines every block at full speed. The rules are copied from the vanilla Netherite pickaxe
+	 * (tags are not bound yet during mod init, so they can't be looked up directly), with their
+	 * speed raised to match the Shard material.
+	 */
 	private static ToolComponent anyBlockTool() {
-		return new ToolComponent(
-				List.of(ToolComponent.Rule.ofAlwaysDropping(Registries.BLOCK.getOrThrow(BlockTags.PICKAXE_MINEABLE), 35.0f)),
-				35.0f, 1, true);
+		ToolComponent vanilla = Items.NETHERITE_PICKAXE.getComponents().get(DataComponentTypes.TOOL);
+		List<ToolComponent.Rule> rules = new ArrayList<>();
+		for (ToolComponent.Rule r : vanilla.rules()) {
+			rules.add(new ToolComponent.Rule(r.blocks(), Optional.of(35.0f), r.correctForDrops()));
+		}
+		return new ToolComponent(rules, 35.0f, 1, true);
 	}
 
 	@Override
