@@ -12,22 +12,22 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with: { gradle-version: "9.2.1" }
       - run: gradle build
+      - run: cd resourcepack && zip -qr /tmp/emerald-tools-resourcepack.zip .
       - uses: actions/upload-artifact@v4
         with: { name: emerald-tools, path: build/libs/*.jar }
-      - name: Publish jar to dist branch and release
+      - name: Publish to dist branch and release
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          JAR=$(ls build/libs/*.jar | grep -v -- '-sources' | head -1)
-          cp "$JAR" /tmp/emerald-tools.jar
+          cp "$(ls build/libs/*.jar | head -1)" /tmp/emerald-tools.jar
           gh release delete v1.0.0 --yes --cleanup-tag || true
-          gh release create v1.0.0 /tmp/emerald-tools.jar --title "Emerald Tools" --notes "Fabric 1.21.11"
+          gh release create v1.0.0 /tmp/emerald-tools.jar /tmp/emerald-tools-resourcepack.zip --title "Emerald Tools (Paper)" --notes "Paper plugin for 1.21.11 plus resource pack"
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git checkout --orphan dist
           git rm -rf . -q
-          cp /tmp/emerald-tools.jar .
-          git add emerald-tools.jar
+          cp /tmp/emerald-tools.jar /tmp/emerald-tools-resourcepack.zip .
+          git add emerald-tools.jar emerald-tools-resourcepack.zip
           git commit -qm "Built jar"
           git push -f origin dist

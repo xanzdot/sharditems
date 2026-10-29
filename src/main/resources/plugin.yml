@@ -1,0 +1,15 @@
+name: EmeraldTools
+version: '${version}'
+main: com.emeraldtools.EmeraldToolsPlugin
+api-version: '1.21'
+description: Emerald Pickaxe (3x3), Emerald Axe (fells whole trees) and Emerald Sword (pops totems).
+commands:
+  emeraldtools:
+    description: Give yourself or another player an Emerald tool
+    usage: /emeraldtools give <pickaxe|axe|sword> [player]
+    aliases: [emerald]
+    permission: emeraldtools.give
+permissions:
+  emeraldtools.give:
+    description: Use /emeraldtools give
+    default: op
