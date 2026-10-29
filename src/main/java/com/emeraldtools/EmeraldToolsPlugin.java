@@ -285,9 +285,10 @@ public final class EmeraldToolsPlugin extends JavaPlugin implements Listener, Ta
 			sender.sendMessage("Player not found.");
 			return true;
 		}
-		target.getInventory().addItem(createItem(kind)).values()
-				.forEach(left -> target.getWorld().dropItemNaturally(target.getLocation(), left));
-		sender.sendMessage("Gave " + kind.display + " to " + target.getName() + ".");
+		final Player receiver = target;
+		receiver.getInventory().addItem(createItem(kind)).values()
+				.forEach(left -> receiver.getWorld().dropItemNaturally(receiver.getLocation(), left));
+		sender.sendMessage("Gave " + kind.display + " to " + receiver.getName() + ".");
 		return true;
 	}
 
