@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": ["EEE", " B ", " B "],
+  "key": {
+    "E": "minecraft:deepslate_emerald_ore",
+    "B": "minecraft:breeze_rod"
+  },
+  "result": { "id": "emerald_tools:emerald_pickaxe", "count": 1 }
+}
