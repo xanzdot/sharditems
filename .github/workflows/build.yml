@@ -11,7 +11,15 @@ jobs:
         with: { distribution: temurin, java-version: 21 }
       - uses: gradle/actions/setup-gradle@v4
         with: { gradle-version: "9.2.1" }
-      - run: gradle build
+      - name: Build
+        run: |
+          set +e
+          gradle build --console=plain > /tmp/build.log 2>&1
+          code=$?
+          if [ $code -ne 0 ]; then
+            grep -E "error:|warning: \[|What went wrong|Could not|FAILED|symbol:|location:" -A2 /tmp/build.log | head -40 | while IFS= read -r line; do echo "::error::${line}"; done
+          fi
+          exit $code
       - run: cd resourcepack && zip -qr /tmp/emerald-tools-resourcepack.zip .
       - uses: actions/upload-artifact@v4
         with: { name: emerald-tools, path: build/libs/*.jar }
