@@ -31,6 +31,7 @@ jobs:
         run: |
           tools/inspect.sh /tmp/inspect || true
           [ -f tools/inspect2.sh ] && tools/inspect2.sh /tmp/inspect || true
+          [ -f tools/inspect3.sh ] && tools/inspect3.sh /tmp/inspect || true
       - name: Publish outputs to branches
         env:
           GH_TOKEN: ${{ github.token }}
