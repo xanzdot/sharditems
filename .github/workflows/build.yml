@@ -28,7 +28,9 @@ jobs:
           exit 0
       - name: Inspect game jar
         if: always() && hashFiles('tools/inspect.sh') != ''
-        run: tools/inspect.sh /tmp/inspect || true
+        run: |
+          tools/inspect.sh /tmp/inspect || true
+          [ -f tools/inspect2.sh ] && tools/inspect2.sh /tmp/inspect || true
       - name: Publish outputs to branches
         env:
           GH_TOKEN: ${{ github.token }}
