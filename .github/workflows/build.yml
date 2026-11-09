@@ -1,0 +1,50 @@
+name: build
+on:
+  push:
+    branches: [trippy-rainbow]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 25 }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: "9.6.0" }
+      - name: Build
+        id: build
+        run: |
+          set +e
+          gradle build --console=plain > /tmp/build.log 2>&1
+          code=$?
+          if [ $code -ne 0 ]; then
+            grep -E "error:|What went wrong|Could not|FAILED|symbol:|location:|Unable|not found" -A2 /tmp/build.log | head -40 | while IFS= read -r line; do echo "::error::${line}"; done
+          fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          cp /tmp/build.log ./build-log.txt
+          exit 0
+      - name: Inspect game jar
+        if: always() && hashFiles('tools/inspect.sh') != ''
+        run: tools/inspect.sh /tmp/inspect || true
+      - name: Publish outputs to branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          mkdir -p /tmp/pub
+          cp build-log.txt /tmp/pub/ 2>/dev/null || true
+          [ -d /tmp/inspect ] && rm -rf /tmp/inspect/x && cp -r /tmp/inspect /tmp/pub/inspect
+          ls build/libs/*.jar 2>/dev/null | grep -v -- '-sources' | head -1 | xargs -I{} cp {} /tmp/pub/trippy-rainbow.jar || true
+          git checkout --orphan trippy-dist
+          git rm -rf . -q
+          cp -r /tmp/pub/. .
+          git add -A
+          git commit -qm "Build outputs" || true
+          git push -f origin trippy-dist
+      - name: Fail if build failed
+        if: steps.build.outputs.code != '0'
+        run: exit 1
