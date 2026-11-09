@@ -26,13 +26,6 @@ jobs:
           echo "code=$code" >> "$GITHUB_OUTPUT"
           cp /tmp/build.log ./build-log.txt
           exit 0
-      - name: Inspect game jar
-        if: always() && hashFiles('tools/inspect.sh') != ''
-        run: |
-          tools/inspect.sh /tmp/inspect || true
-          [ -f tools/inspect2.sh ] && tools/inspect2.sh /tmp/inspect || true
-          [ -f tools/inspect3.sh ] && tools/inspect3.sh /tmp/inspect || true
-          [ -f tools/inspect4.sh ] && tools/inspect4.sh /tmp/inspect || true
       - name: Publish outputs to branches
         env:
           GH_TOKEN: ${{ github.token }}
@@ -41,8 +34,11 @@ jobs:
           git config user.email "actions@github.com"
           mkdir -p /tmp/pub
           cp build-log.txt /tmp/pub/ 2>/dev/null || true
-          [ -d /tmp/inspect ] && rm -rf /tmp/inspect/x && cp -r /tmp/inspect /tmp/pub/inspect
           ls build/libs/*.jar 2>/dev/null | grep -v -- '-sources' | head -1 | xargs -I{} cp {} /tmp/pub/trippy-rainbow.jar || true
+          if [ -f /tmp/pub/trippy-rainbow.jar ]; then
+            gh release delete trippy-rainbow-1.0.0 --yes --cleanup-tag || true
+            gh release create trippy-rainbow-1.0.0 /tmp/pub/trippy-rainbow.jar --target trippy-rainbow --title "Trippy Rainbow (Fabric 26.3)" --notes "Client-side Fabric mod for Minecraft 26.3. Press K to cycle Off / Mild / Full / Insane."
+          fi
           git checkout --orphan trippy-dist
           git rm -rf . -q
           cp -r /tmp/pub/. .
